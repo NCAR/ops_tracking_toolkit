@@ -1,2 +1,3 @@
 pyextraview
 sqlite3
+ClusterShell
