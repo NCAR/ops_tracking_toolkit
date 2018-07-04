@@ -9,7 +9,7 @@ Operations Tracking Toolkit to monitor down nodes and cables in clusters
 * [PIP](https://pypi.python.org/pypi/pip) or [easy_install](https://pypi.python.org/pypi/setuptools)
 * make
 * [clush](https://github.com/cea-hpc/clustershell)
-** Clush must be fully configured to run on cluster.
+  * Clush must be fully configured to run on cluster.
 
 ## Limitations:
 This project is currently restricted to sites with PBSPro, SGI ICE, and Mellanox Infiniband. Support is planned for generic Linux clusters and Slurm.
