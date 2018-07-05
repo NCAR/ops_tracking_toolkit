@@ -29,17 +29,17 @@
 #OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 from . import opstt
 from sys import path, argv
-from nlog import vlog,die_now
+from .nlog import vlog,die_now
 from ClusterShell.NodeSet import NodeSet
 from ClusterShell.Task import task_self
 import json
 import os
 import syslog
-import pbs
-import siblings
-import sgi_cluster
-import ipmi
-import file_locking
+from . import pbs
+from . import siblings
+from . import sgi_cluster
+from . import ipmi
+from . import file_locking
 import time
 import datetime
 
@@ -99,11 +99,11 @@ def save_state():
     if len(STATE['nodes']) < 1:
 	badnodes = 'None'
     else:
-	badnodes = ' '.join(STATE['nodes'].keys())
+	badnodes = ' '.join(list(STATE['nodes'].keys()))
 
     #Create bad: groups per each state
     bgroups = {}
-    for node,nodest in STATE['nodes'].iteritems():
+    for node,nodest in STATE['nodes'].items():
 	if not nodest['state'] in bgroups:
 	    bgroups[nodest['state']] = []
 
@@ -112,7 +112,7 @@ def save_state():
     with open(CLUSH_BAD_GROUPS, 'w') as fds:
 	fds.write("bad:\n  nodes: {}\n".format(badnodes))
 
-	for bgroup,bgrouplst in bgroups.iteritems():
+	for bgroup,bgrouplst in bgroups.items():
 	    fds.write("  {}: {}\n".format(bgroup, ' '.join(bgrouplst)))
 
 def add_nodes(nodes, comment, new_state = 'suspect-pending', skip_ev = False):
@@ -196,10 +196,10 @@ def list_state(nodes):
     if nodes != '':
 	nodelist = list(nodes)
 
-    print '{:<20}{:<20}{:<20}{:<50}{:<20}'.format('Node','state','Extraview','comment', 'scheduler comment')
-    for node,state in STATE['nodes'].iteritems():
+    print('{:<20}{:<20}{:<20}{:<50}{:<20}'.format('Node','state','Extraview','comment', 'scheduler comment'))
+    for node,state in STATE['nodes'].items():
 	if len(nodelist) == 0 or node in nodelist:
-	    print '{:<20}{:<20}{:<20}{:<50}{:<20}'.format(node,state['state'], ','.join(state['extraview']),state['comment'], state['scheduler_comment'])
+	    print('{:<20}{:<20}{:<20}{:<50}{:<20}'.format(node,state['state'], ','.join(state['extraview']),state['comment'], state['scheduler_comment']))
  
 def comment_nodes(nodes, comment):
     """ add comment to nodes """
@@ -356,14 +356,14 @@ def run_auto():
 
     #make list of nodes that dont have jobs
     jobless = []
-    for node, nodest in nstates.iteritems():
+    for node, nodest in nstates.items():
         if not ('resources_assigned' in nodest \
 	    and 'ncpus' in nodest['resources_assigned'] \
 	    and nodest['resources_assigned']['ncpus'] > 0
 	    ):
 		jobless.append(node)
 
-    for node, nodest in nstates.iteritems():
+    for node, nodest in nstates.items():
 	states = nodest['state'].split(',')
 	known_bad = node in STATE['nodes']
 
@@ -383,7 +383,7 @@ def run_auto():
 	#find nodes in pending states that no longer have jobs
 	if node in jobless and 'offline' in states and known_bad:
 	    has_sibling_job = False
-	    for sib, sibst in STATE['nodes'].iteritems():
+	    for sib, sibst in STATE['nodes'].items():
 		if node in sibst['siblings'] and not sib in jobless:
 		    has_sibling_job  = True
 		    vlog(5, 'node %s has sibling %s with job' % (node, sib))
@@ -399,7 +399,7 @@ def run_auto():
     check_nodes = []
 
     #create list of nodes that are not bad and update scheduler comments
-    for node, nodest in nstates.iteritems():
+    for node, nodest in nstates.items():
 	if not node in STATE['nodes'] or is_pending_node(node):
 	    check_nodes.append(node)
 	if node in STATE['nodes']:

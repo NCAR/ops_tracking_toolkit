@@ -27,7 +27,7 @@
 #WHETHER IN CONTRACT, STRICT LIABILITY,
 #OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
-from nlog import vlog
+from .nlog import vlog
 import subprocess 
 import errno    
 import os
@@ -101,7 +101,7 @@ def exec_to_string ( cmd, cwd='/tmp/' ):
 	return [-1, '', 'Failed to run'] 
 
 #https://stackoverflow.com/questions/600268/mkdir-p-functionality-in-python
-def mkdir_p(path, mode = 0755):
+def mkdir_p(path, mode = 0o755):
     try:
         os.makedirs(path, mode)
     except OSError as exc:  # Python >2.5

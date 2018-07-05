@@ -28,11 +28,11 @@
 #OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 from sys import path, argv
-from nlog import vlog,die_now
-import nfile
+from .nlog import vlog,die_now
+from . import nfile
 from ClusterShell.NodeSet import NodeSet
 from ClusterShell.Task import task_self
-import cluster_info
+from . import cluster_info
 import re
 import os
 
@@ -123,7 +123,7 @@ def exec_opensm_to_file ( cmd, output_file, timeout = 300 ):
 
     output = ret['output']
 
-    for node, out in output.iteritems():
+    for node, out in output.items():
 	return nfile.write_file(output_file, "\n".join(out))
 
     return None
@@ -134,7 +134,7 @@ def disable_port( guid, port ):
     GUID must be integer and not hex string
     """
 
-    if not isinstance(guid, (int, long)) or not isinstance(port, (int)):
+    if not isinstance(guid, int) or not isinstance(port, (int)):
 	vlog(1, 'guid/port must be ints. given %s/P%s %s/%s' % (guid, port, type(guid), type(port)))
 	return None
 
@@ -152,7 +152,7 @@ def enable_port( guid, port, retry = 10 ):
     GUID must be integer and not hex string
     """
 
-    if not isinstance(guid, (int, long)) or not isinstance(port, (int)):
+    if not isinstance(guid, int) or not isinstance(port, (int)):
 	vlog(1, 'guid/port must be ints. given %s/P%s %s/%s' % (guid, port, type(guid), type(port)))
 	return None
 
@@ -174,7 +174,7 @@ def query_port( guid, port ):
     GUID must be integer and not hex string
     """
 
-    if not isinstance(guid, (int, long)) or not isinstance(port, (int)):
+    if not isinstance(guid, int) or not isinstance(port, (int)):
 	vlog(1, 'guid/port must be ints. given %s/P%s %s/%s' % (guid, port, type(guid), type(port)))
 	return None
 
@@ -196,7 +196,7 @@ def ibportstate_parse_dict( output ):
         re.VERBOSE
         ) 
 
-    for sm,out in output.iteritems():
+    for sm,out in output.items():
         for smout in out:
             for line in smout.split(os.linesep):
                 match = ibregex.match(line)

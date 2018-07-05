@@ -33,8 +33,8 @@
 #
 import socket
 import re
-from nlog import vlog,die_now
-import nfile
+from .nlog import vlog,die_now
+from . import nfile
 
 def get_cluster_name():
     if re.search("^la", socket.gethostname()):

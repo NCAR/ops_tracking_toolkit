@@ -28,7 +28,7 @@
 #OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 from ClusterShell.Task import task_self, NodeSet
-from nlog import vlog
+from .nlog import vlog
 import json
 from pipes import quote
 

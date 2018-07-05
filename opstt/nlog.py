@@ -37,7 +37,7 @@ def vlog(level, string):
 	vlevel = int(os.environ['VERBOSE'])
 
     if vlevel >= level:
-	print string
+	print(string)
 
     syslog.syslog(str(string))
 

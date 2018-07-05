@@ -32,8 +32,8 @@
 # TODO: clean this up and make it load from somewhere intelligently
 #
 from sys import path, argv
-import sgi_cluster
-import ibm_cluster
+from . import sgi_cluster
+from . import ibm_cluster
 import socket
 import re
 

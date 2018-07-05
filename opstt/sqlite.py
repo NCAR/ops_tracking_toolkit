@@ -28,7 +28,7 @@
 #OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 import sqlite3
-from nlog import vlog,die_now
+from .nlog import vlog,die_now
 
 def init(database_path):
     """ Attempt to open a SQLite database and returns the connection and cursor """

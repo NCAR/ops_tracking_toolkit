@@ -29,11 +29,11 @@
 #OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 import socket
 from sys import path, argv
-from nlog import vlog,die_now
+from .nlog import vlog,die_now
 from ClusterShell.NodeSet import NodeSet
 from ClusterShell.Task import task_self
 import ClusterShell
-import sgi_cluster
+from . import sgi_cluster
 import syslog
 
 class __OutputHandler(ClusterShell.Event.EventHandler):

@@ -30,18 +30,18 @@
 from . import opstt
 from sys import path, argv, stderr
 import extraview_cli
-import nfile
-from nlog import vlog,die_now
+from . import nfile
+from .nlog import vlog,die_now
 from ClusterShell.NodeSet import NodeSet
 from ClusterShell.Task import task_self
-import sqlite
+from . import sqlite
 import os
 import syslog
-import pbs
-import siblings
-import cluster_info
-import ib_diagnostics
-import ib_mgt
+from . import pbs
+from . import siblings
+from . import cluster_info
+from . import ib_diagnostics
+from . import ib_mgt
 import pprint
 import time
 import datetime
@@ -764,7 +764,7 @@ def detect_bisect_cable(cid):
 		start |= graph[next] - visited
 
     #vlog(4, 'Guids path from %s: %s' % (' '.join(visited)))
-    vlog(4, 'Guids missing path from %s: %s' % (' '.join(graph.keys() - visited)))
+    vlog(4, 'Guids missing path from %s: %s' % (' '.join(list(graph.keys()) - visited)))
     vlog(4, 'No path exists between: %s'  % (' '.join(check_guids)))
     vlog(3, 'Bisection detected if cable c%s is removed' % (cid))
     return True
@@ -925,10 +925,10 @@ def query_cable_ports(cid):
 
     for row in SQL.fetchall(): 
 	ret = ib_mgt.query_port(int(row['guid']), int(row['port']))
-	for sm,txt in ret.iteritems():
+	for sm,txt in ret.items():
 	    for field in txt:
 		for line in field.split(os.linesep):
-		    print '%s: %s' % (row['flabel'], line)
+		    print('%s: %s' % (row['flabel'], line))
  
 def dump_debug(cid, output_path):
     """ dumps switch states per mellanox requirements """
@@ -992,7 +992,7 @@ def dump_debug(cid, output_path):
 	    vlog(4, 'Skipping repeat pull of %s' % (row['flabel']))
 	else:
 	    guids.add(row['guid'])
-	    for node, output in ret['output'].iteritems():
+	    for node, output in ret['output'].items():
 		for out in output:
 		    match = lidregex.match(out)
 		    if not match:
@@ -1365,7 +1365,7 @@ def list_state(what, list_filter):
 
     if what == 'action' or what == 'actions' or what == 'actionable':
 	f='{0:<10}{1:<10}{2:<15}{3:<12}{4:<15}{5:<15}{6:<70}'
- 	print f.format(
+ 	print(f.format(
 		"cable_id",
 		"state",
 		"Ticket",
@@ -1373,7 +1373,7 @@ def list_state(what, list_filter):
 		"Serial_Number",
 		"Product_Number",
 		"Firmware Label (node_desc)"
-	    )             
+	    ))             
 
 	for cid in resolve_cables(list_filter):
 	    SQL.execute('''
@@ -1404,7 +1404,7 @@ def list_state(what, list_filter):
 	    ))
 
 	    for row in SQL.fetchall():
-		print f.format(
+		print(f.format(
 			'c%s' % (row['cid']),
 			row['state'],
 			't%s' % (row['ticket']) if row['ticket'] else None,
@@ -1412,12 +1412,12 @@ def list_state(what, list_filter):
 			row['SN'] if row['SN'] else None,
 			row['PN'] if row['PN'] else None,
 			row['flabel']
-		    ) 
-		print '\tSuspected %s times. Last went suspect on %s' % (
+		    )) 
+		print('\tSuspected %s times. Last went suspect on %s' % (
 			row['suspected'], 
 			datetime.datetime.fromtimestamp(row['mtime']).strftime('%Y-%m-%d %H:%M:%S') if row['mtime'] > 0 else None
-		    )
-		print '\tComment: %s' % (row['comment'])
+		    ))
+		print('\tComment: %s' % (row['comment']))
 
 		SQL.execute('''
 		    SELECT 
@@ -1442,17 +1442,17 @@ def list_state(what, list_filter):
 		))
 
 		for irow in SQL.fetchall():
-		    print '\tIssue %s %s: %s' % (
+		    print('\tIssue %s %s: %s' % (
 			    'i%s' % irow['iid'],
 			    irow['source'],
 			    irow['issue']
-			) 
+			)) 
 
-		print ' '
+		print(' ')
 
     elif what == 'cables' or what == 'cable':
         f='{0:<10}{1:10}{2:<12}{3:<15}{4:<15}{5:<15}{6:<15}{7:<15}{8:<15}{9:<50}{10:<50}{11:<50}'
- 	print f.format(
+ 	print(f.format(
 		"cable_id",
 		"state",
 		"Suspected#",
@@ -1465,7 +1465,7 @@ def list_state(what, list_filter):
 		"Comment",
 		"Firmware Label (node_desc)",
 		"Physical Label"
-	    )            
+	    ))            
 	for cid in resolve_cables(list_filter):
 	    SQL.execute('''
 		SELECT 
@@ -1506,7 +1506,7 @@ def list_state(what, list_filter):
 	    ))
 
 	    for row in SQL.fetchall():
-		print f.format(
+		print(f.format(
 			'c%s' % (row['cid']),
 			row['state'],
 			row['suspected'],
@@ -1519,11 +1519,11 @@ def list_state(what, list_filter):
 			row['comment'],
 			row['flabel'],
 			row['plabel']
-		    )
+		    ))
 
     elif what == 'ports' or what == 'port':
         f='{0:<10}{1:<10}{2:<25}{3:<7}{4:<7}{5:<50}{6:<50}{7:<50}'
- 	print f.format(
+ 	print(f.format(
 		"cable_id",
 		"port_id",
 		"guid",
@@ -1532,7 +1532,7 @@ def list_state(what, list_filter):
 		"name (node_desc)",
 		"Firmware Label",
 		"Physical Label"
-	    ) 
+	    )) 
 
 	for cid in resolve_cables(list_filter):
 	    SQL.execute('''
@@ -1556,7 +1556,7 @@ def list_state(what, list_filter):
 	    ))
 
 	    for row in SQL.fetchall():
-		print f.format(
+		print(f.format(
 			'c%s' % row['cid'],
 			'p%s' % row['cpid'],
 			hex(int(row['guid'])),
@@ -1565,11 +1565,11 @@ def list_state(what, list_filter):
 			row['name'],
 			row['flabel'],
 			row['plabel']
-		    )
+		    ))
 
     elif what == 'issues':
 	f='{0:<10}{1:<15}{2:<10}{3:<10}{4:<15}{5:<20}:{6:<100}{7:<50}'
- 	print f.format(
+ 	print(f.format(
 		"issue_id",
 		"Type",
 		"cable_id",
@@ -1578,7 +1578,7 @@ def list_state(what, list_filter):
 		"source",
 		"issue",
 		"raw error"
-	    ) 
+	    )) 
 
 	for cid in resolve_cables(list_filter):
 	    SQL.execute('''
@@ -1600,7 +1600,7 @@ def list_state(what, list_filter):
 	    ''', (cid, cid))
 
 	    for row in SQL.fetchall():
-		print f.format(
+		print(f.format(
 			'i%s' % row['iid'],
 			row['type'],
 			'c%s' % row['cid'] if row['cid'] else None,
@@ -1609,7 +1609,7 @@ def list_state(what, list_filter):
 			row['source'],
 			row['issue'],
 			row['raw'].replace("\n", "\\n") if row['ignore'] == 0 and row['raw'] else None
-		    )
+		    ))
 
     else:
 	vlog(1, 'unknown list %s request' % (list_filter))
@@ -1856,7 +1856,7 @@ def run_parse(dump_dir):
 	cid = SQL.lastrowid
 
 	#insert the ports
-	for key,port in {'port1': port1, 'port2': port2}.iteritems():
+	for key,port in {'port1': port1, 'port2': port2}.items():
 	    if port:
 		SQL.execute('''
 		    INSERT INTO cable_ports (
@@ -2214,7 +2214,7 @@ def run_parse(dump_dir):
 
 def dump_help(full = False):
     if full == True:
-	print("""NCAR Bad Cable List Multitool (Full Help)
+	print(("""NCAR Bad Cable List Multitool (Full Help)
 
 	help: {0}
 	    Print this help message
@@ -2340,7 +2340,7 @@ def dump_help(full = False):
 		Warning: will autocreate if non-existant or empty
 		Override which sqlite DB to use.
      
-	\n""".format(argv[0]))
+	\n""".format(argv[0])))
     else: #short error mode
 	stderr.write("""NCAR Bad Cable List Multitool (Quick Help)
 

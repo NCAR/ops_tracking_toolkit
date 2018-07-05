@@ -28,12 +28,12 @@
 #OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 from sys import path, argv
-from nlog import vlog,die_now,to_hex,is_ascii
+from .nlog import vlog,die_now,to_hex,is_ascii
 import re
 import os
 import csv
-import cluster_info
-import sgi_cluster
+from . import cluster_info
+from . import sgi_cluster
 import math
 
 def parse_port ( label ):
@@ -771,7 +771,7 @@ def parse_ibdiagnet_csv ( ports, issues, fcsv ):
 		if csv_headers == None:
 		    csv_headers = row;
 		else: #data
-		    rowdict = dict(zip(csv_headers, row))
+		    rowdict = dict(list(zip(csv_headers, row)))
 
 		    if csv_mode == 'START_CABLE_INFO':
                         if (

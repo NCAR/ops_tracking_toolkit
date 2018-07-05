@@ -30,7 +30,7 @@
 import os
 import time
 import fcntl
-from nlog import vlog,die_now
+from .nlog import vlog,die_now
 
 def _try_lock_once(fd):
     """ Try to get lock once """
@@ -57,7 +57,7 @@ def try_lock(file_path, tries = 5):
 	vlog(5, 'unable to open {0} with exception: {1}'.format(file_path, exp))
 	return False
 
-    for x in xrange(0, tries):
+    for x in range(0, tries):
 	if _try_lock_once(file_descriptor):
 	    vlog(5, 'lock obtained')
 	    return file_descriptor 
