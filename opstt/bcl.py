@@ -27,9 +27,9 @@
 #WHETHER IN CONTRACT, STRICT LIABILITY,
 #OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
-from . import opstt
+import opstt
 from sys import path, argv, stderr
-import extraview_cli
+import extraview
 from . import nfile
 from .nlog import vlog,die_now
 from ClusterShell.NodeSet import NodeSet
