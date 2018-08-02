@@ -38,6 +38,12 @@ from . import ibm_cluster
 import socket
 import re
 
+CONFIG = None
+
+def init(_CONFIG):
+    global CONFIG
+    CONFIG = _CONFIG
+
 def get_cluster_info():
     if re.search("^(la|ch)", socket.gethostname()):
         return { 

@@ -2371,6 +2371,7 @@ def dump_help(full = False):
 
 def main():
     CONFIG = config.load()
+    cluster_info.init(CONFIG)
     print(CONFIG)
 
 #if not cluster_info.is_mgr():
