@@ -1,2 +1,4 @@
 *.pyc
+*.swp
+*.bak
 ops_tracking_toolkit.egg-info/
