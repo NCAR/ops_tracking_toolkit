@@ -31,6 +31,7 @@
 import opstt
 from sys import path, argv, stderr
 import extraview
+from . import config
 from . import nfile
 from .nlog import vlog,die_now
 from ClusterShell.NodeSet import NodeSet
@@ -2368,113 +2369,117 @@ def dump_help(full = False):
             add comment to bad cable's extraview ticket 
         \n""".format(argv[0]))
 
-if not cluster_info.is_mgr():
-    die_now("Only run this on the cluster manager")
+def main():
+    CONFIG = config.load()
+    print(CONFIG)
 
-BAD_CABLE_DB='/etc/ncar_bad_cable_list.sqlite'
-""" const string: Path to JSON database for bad cable list """
-
-DISABLE_PORT_STATE_CHANGE=False
-DISABLE_BISECT_DETECT=False
-DISABLE_TICKETS=False
-EV = None
-syslog.openlog('bcl.py')
-
-if 'BAD_CABLE_DB' in os.environ and os.environ['BAD_CABLE_DB']:
-    BAD_CABLE_DB=os.environ['BAD_CABLE_DB']
-    syslog.openlog('bcl.py::override')
-    vlog(1, 'Database: %s' % (BAD_CABLE_DB))
-
-if 'DISABLE_TICKETS' in os.environ and os.environ['DISABLE_TICKETS'] == "YES":
-    DISABLE_TICKETS=True
-    vlog(1, 'Warning: Disabling creating of extraview tickets')
-else:
-    EV = extraview_cli.open_extraview()
-
-if 'DISABLE_BISECT_DETECT' in os.environ and os.environ['DISABLE_BISECT_DETECT'] == "YES":
-    DISABLE_BISECT_DETECT=True
-    vlog(1, 'Warning: Disabling bisection detection.')
-
-if 'DISABLE_PORT_STATE_CHANGE' in os.environ and os.environ['DISABLE_PORT_STATE_CHANGE'] == "YES":
-    DISABLE_BISECT_DETECT=True
-    vlog(1, 'Warning: Disabling port state changes.') 
-
-initialize_db()
-
-vlog(5, argv)
-
-if len(argv) < 2:
-    dump_help() 
-else:
-    CMD=argv[1].lower()
-    if CMD == 'parse':
-        run_parse(argv[2])
-    elif CMD == 'bisect':
-        for cid in resolve_cables(argv[2:]):
-            detect_bisect_cable(cid)  
-    elif len(argv) < 3:
-        if CMD == 'help':
-            dump_help(True)  
-        elif CMD == 'list':
-            list_state('action', None)   
-        elif CMD == 'inventory':
-            dump_inventory()
-        else:
-            dump_help()  
-    else:
-        if CMD == 'list':
-            list_state(argv[2].lower(), argv[3:] if len(argv) > 3 else None)  
-        elif CMD == 'replace':
-            new_cid = None
-            for cid in resolve_cables([argv[3]]):
-                new_cid = cid
-            if new_cid:
-                for cid in resolve_cables(argv[4:]):
-                    mark_replaced_cable(cid, new_cid, argv[2]) 
-        elif CMD == 'remove':
-            for cid in resolve_cables(argv[3:]):
-                remove_cable(cid, argv[2]) 
-        elif CMD == 'mlxdump' or CMD == 'dump':
-            for cid in resolve_cables(argv[3:]):
-                dump_debug(cid, argv[2]) 
-        elif CMD == 'disable':
-            for cid in resolve_cables(argv[3:]):
-                disable_cable(cid, argv[2])
-        elif CMD == 'enable':
-            for cid in resolve_cables(argv[3:]):
-                enable_cable(cid, argv[2]) 
-        elif CMD == 'casg':
-            for cid in resolve_cables(argv[3:]):
-                send_casg(cid, argv[2]) 
-        elif CMD == 'add' or CMD == 'suspect':
-            for cid in resolve_cables(argv[3:]):
-                add_issue('Manual Entry', cid, argv[2], None, 'admin', int(time.time()))
-        elif CMD == 'release' or CMD == 'resolve':
-            for cid in resolve_cables(argv[3:]):
-                release_cable(cid, argv[2])
-        elif CMD == 'query':
-            for cid in resolve_cables(argv[2:]):
-                query_cable_ports(cid) 
-        elif CMD == 'rejuvenate':
-            for cid in resolve_cables(argv[3:]):
-                release_cable(cid, argv[2], True)
-        elif CMD == 'ignore':
-            for iid in resolve_issues(argv[3:]):
-                ignore_issue(argv[2], iid)
-        elif CMD == 'honor':
-            for iid in resolve_issues(argv[3:]):
-                honor_issue(argv[2], iid) 
-        elif CMD == 'cable_plabel':
-            for cid in resolve_cables(argv[3:]):
-                set_plabel_cable(cid, argv[2])
-        elif CMD == 'port_plabel':
-            for cid in resolve_cable_ports(argv[3:]):
-                set_plabel_cableport(cid, argv[2])
-        elif CMD == 'comment':
-            for cid in resolve_cables(argv[3:]):
-                comment_cable(cid, argv[2]) 
-        else:
-            dump_help() 
-
-release_db()
-
+#if not cluster_info.is_mgr():
+#    die_now("Only run this on the cluster manager")
+#
+#BAD_CABLE_DB='/etc/ncar_bad_cable_list.sqlite'
+#""" const string: Path to JSON database for bad cable list """
+#
+#DISABLE_PORT_STATE_CHANGE=False
+#DISABLE_BISECT_DETECT=False
+#DISABLE_TICKETS=False
+#EV = None
+#syslog.openlog('bcl.py')
+#
+#if 'BAD_CABLE_DB' in os.environ and os.environ['BAD_CABLE_DB']:
+#    BAD_CABLE_DB=os.environ['BAD_CABLE_DB']
+#    syslog.openlog('bcl.py::override')
+#    vlog(1, 'Database: %s' % (BAD_CABLE_DB))
+#
+#if 'DISABLE_TICKETS' in os.environ and os.environ['DISABLE_TICKETS'] == "YES":
+#    DISABLE_TICKETS=True
+#    vlog(1, 'Warning: Disabling creating of extraview tickets')
+#else:
+#    EV = extraview_cli.open_extraview()
+#
+#if 'DISABLE_BISECT_DETECT' in os.environ and os.environ['DISABLE_BISECT_DETECT'] == "YES":
+#    DISABLE_BISECT_DETECT=True
+#    vlog(1, 'Warning: Disabling bisection detection.')
+#
+#if 'DISABLE_PORT_STATE_CHANGE' in os.environ and os.environ['DISABLE_PORT_STATE_CHANGE'] == "YES":
+#    DISABLE_BISECT_DETECT=True
+#    vlog(1, 'Warning: Disabling port state changes.') 
+#
+#initialize_db()
+#
+#vlog(5, argv)
+#
+#if len(argv) < 2:
+#    dump_help() 
+#else:
+#    CMD=argv[1].lower()
+#    if CMD == 'parse':
+#        run_parse(argv[2])
+#    elif CMD == 'bisect':
+#        for cid in resolve_cables(argv[2:]):
+#            detect_bisect_cable(cid)  
+#    elif len(argv) < 3:
+#        if CMD == 'help':
+#            dump_help(True)  
+#        elif CMD == 'list':
+#            list_state('action', None)   
+#        elif CMD == 'inventory':
+#            dump_inventory()
+#        else:
+#            dump_help()  
+#    else:
+#        if CMD == 'list':
+#            list_state(argv[2].lower(), argv[3:] if len(argv) > 3 else None)  
+#        elif CMD == 'replace':
+#            new_cid = None
+#            for cid in resolve_cables([argv[3]]):
+#                new_cid = cid
+#            if new_cid:
+#                for cid in resolve_cables(argv[4:]):
+#                    mark_replaced_cable(cid, new_cid, argv[2]) 
+#        elif CMD == 'remove':
+#            for cid in resolve_cables(argv[3:]):
+#                remove_cable(cid, argv[2]) 
+#        elif CMD == 'mlxdump' or CMD == 'dump':
+#            for cid in resolve_cables(argv[3:]):
+#                dump_debug(cid, argv[2]) 
+#        elif CMD == 'disable':
+#            for cid in resolve_cables(argv[3:]):
+#                disable_cable(cid, argv[2])
+#        elif CMD == 'enable':
+#            for cid in resolve_cables(argv[3:]):
+#                enable_cable(cid, argv[2]) 
+#        elif CMD == 'casg':
+#            for cid in resolve_cables(argv[3:]):
+#                send_casg(cid, argv[2]) 
+#        elif CMD == 'add' or CMD == 'suspect':
+#            for cid in resolve_cables(argv[3:]):
+#                add_issue('Manual Entry', cid, argv[2], None, 'admin', int(time.time()))
+#        elif CMD == 'release' or CMD == 'resolve':
+#            for cid in resolve_cables(argv[3:]):
+#                release_cable(cid, argv[2])
+#        elif CMD == 'query':
+#            for cid in resolve_cables(argv[2:]):
+#                query_cable_ports(cid) 
+#        elif CMD == 'rejuvenate':
+#            for cid in resolve_cables(argv[3:]):
+#                release_cable(cid, argv[2], True)
+#        elif CMD == 'ignore':
+#            for iid in resolve_issues(argv[3:]):
+#                ignore_issue(argv[2], iid)
+#        elif CMD == 'honor':
+#            for iid in resolve_issues(argv[3:]):
+#                honor_issue(argv[2], iid) 
+#        elif CMD == 'cable_plabel':
+#            for cid in resolve_cables(argv[3:]):
+#                set_plabel_cable(cid, argv[2])
+#        elif CMD == 'port_plabel':
+#            for cid in resolve_cable_ports(argv[3:]):
+#                set_plabel_cableport(cid, argv[2])
+#        elif CMD == 'comment':
+#            for cid in resolve_cables(argv[3:]):
+#                comment_cable(cid, argv[2]) 
+#        else:
+#            dump_help() 
+#
+#release_db()
+#

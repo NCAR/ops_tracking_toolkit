@@ -1,0 +1,11 @@
+{
+  "database": "/etc/ncar_bad_cable_list.sqlite",
+  "tickets": {
+    "enabled": false
+  },
+  "cables": {
+    "disable port state change": false,
+    "disable bisect detect": false
+  }
+
+}
