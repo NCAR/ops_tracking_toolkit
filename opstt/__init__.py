@@ -1,3 +1,4 @@
+# vim: set tabstop=8 softtabstop=4 noexpandtab
 from . import cluster_info
 from . import file_locking
 from . import ib_diagnostics

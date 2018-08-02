@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# vim: set tabstop=8 softtabstop=4 noexpandtab
 #Copyright (c) 2017, University Corporation for Atmospheric Research
 #All rights reserved.
 #
@@ -38,18 +39,18 @@ def run_task(cmd):
     task = task_self()
 
     for node in NodeSet('@pbsadmin'): 
-	""" run on pbs nodes until it works """
-	#print (cmd, node)
-	task.run(cmd, nodes=node, timeout=60)
+        """ run on pbs nodes until it works """
+        #print (cmd, node)
+        task.run(cmd, nodes=node, timeout=60)
 
-	#print 'node: %s error: %s' % (node, task.node_error(node))
-	vlog(4, '%s timeouts:%s Error=%s' % (node, task.num_timeout(), task.node_error(node)))
+        #print 'node: %s error: %s' % (node, task.node_error(node))
+        vlog(4, '%s timeouts:%s Error=%s' % (node, task.num_timeout(), task.node_error(node)))
 
-	for output, nodelist in task.iter_buffers():
-	    #print 'nodelist:%s' % NodeSet.fromlist(nodelist)
-	    if str(NodeSet.fromlist(nodelist)) == node:
-		return str(output)
-	    #print '%s: %s' % (NodeSet.fromlist(nodelist), output)
+        for output, nodelist in task.iter_buffers():
+            #print 'nodelist:%s' % NodeSet.fromlist(nodelist)
+            if str(NodeSet.fromlist(nodelist)) == node:
+                return str(output)
+            #print '%s: %s' % (NodeSet.fromlist(nodelist), output)
 
     return None
 
@@ -58,13 +59,13 @@ def node_states():
     statesjson = run_task("/opt/pbs/default/bin/pbsnodes -av -Fjson")
 
     if statesjson is None:
-	return None
+        return None
 
     state = json.loads(statesjson)
     del statesjson
 
     return state['nodes']
-	   
+           
 def set_offline_nodes(nodes, comment = None):
     """ Set nodes offline in PBS 
     nodeset: nodes to offline
@@ -72,9 +73,9 @@ def set_offline_nodes(nodes, comment = None):
     """
 
     if comment:
-	return run_task("/opt/pbs/default/bin/pbsnodes -o -C %s %s" % (quote(comment), ' '.join(nodes)) )
+        return run_task("/opt/pbs/default/bin/pbsnodes -o -C %s %s" % (quote(comment), ' '.join(nodes)) )
     else:
-	return run_task("/opt/pbs/default/bin/pbsnodes -o %s" % (' '.join(nodes)) )
+        return run_task("/opt/pbs/default/bin/pbsnodes -o %s" % (' '.join(nodes)) )
 
 def set_online_nodes(nodes, comment = None):
     """ Set nodes online in PBS 
@@ -82,23 +83,23 @@ def set_online_nodes(nodes, comment = None):
     string: comment
     """
     if comment:
-	return run_task("/opt/pbs/default/bin/pbsnodes -r -C %s %s" % (quote(comment), ' '.join(nodes)) )
+        return run_task("/opt/pbs/default/bin/pbsnodes -r -C %s %s" % (quote(comment), ' '.join(nodes)) )
     else:
-	return run_task("/opt/pbs/default/bin/pbsnodes -r %s" % (' '.join(nodes)) )
+        return run_task("/opt/pbs/default/bin/pbsnodes -r %s" % (' '.join(nodes)) )
            
 def is_pbs_down(states):
     """ Do the PBS Node states mean node is down """
     for state in states:
-	if state in [ "offline" , "offline_by_mom" , "down" , "Stale" , "state-unknown" , "maintenance" , "initializing" , "unresolvable" ]:
-	    return True
+        if state in [ "offline" , "offline_by_mom" , "down" , "Stale" , "state-unknown" , "maintenance" , "initializing" , "unresolvable" ]:
+            return True
 
     return False
 
 def is_pbs_job_excl(states):
     """ Do the PBS Node states mean node has exclusive job """
     for state in states:
-	if state in [ "job-exclusive" , "resv-exclusive" , "default_excl" , "default_exclhost" , "force_excl" , "force_exclhost" ]:
-	    return True
+        if state in [ "job-exclusive" , "resv-exclusive" , "default_excl" , "default_exclhost" , "force_excl" , "force_exclhost" ]:
+            return True
 
     return False
 

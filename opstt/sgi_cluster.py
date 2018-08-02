@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# vim: set tabstop=8 softtabstop=4 noexpandtab
 #Copyright (c) 2017, University Corporation for Atmospheric Research
 #All rights reserved.
 #
@@ -38,22 +39,22 @@ from . import nfile
 
 def get_cluster_name():
     if re.search("^la", socket.gethostname()):
-	return 'laramie'
+        return 'laramie'
     if re.search("^ch", socket.gethostname()):
-	return 'cheyenne'
+        return 'cheyenne'
     return None
 
 def get_cluster_name_formal():
     if re.search("^la", socket.gethostname()):
-	return 'Laramie'
+        return 'Laramie'
     if re.search("^ch", socket.gethostname()):
-	return 'Cheyenne'
+        return 'Cheyenne'
     return None
 
 def get_smc_version():
     smcvtxt = nfile.read_file_first_line('/etc/sgi-admin-node-release')
     if not smcvtxt:
-	return None
+        return None
 
     #Known patterns:
     #SGI Management Center Admin Node 3.5.0, Build 716r177.sles12sp2-1705051348
@@ -71,11 +72,11 @@ def is_smc_version_atleast(version):
     sp = get_smc_version().split('.')
 
     if sp[0] < vp[0]:
-	return False
+        return False
     if sp[1] < vp[1]:
-	return False
+        return False
     if sp[2] < vp[2]:
-	return False
+        return False
 
     return True
  
@@ -83,9 +84,9 @@ def is_sac():
     host = socket.gethostname()
 
     if host == 'lamgt' or host == 'chmgt':
-	return True
+        return True
     else:
-	return False
+        return False
 
 def get_sac_hostname():
     if not is_sac():
@@ -97,7 +98,7 @@ def get_ice_info(node):
     m = re.search('^r([0-9]+)i([0-9]+)n([0-9]+)$', node) 
 
     if not m:
-	return False
+        return False
 
     return {
 	'rack':	m.group(1),
@@ -111,28 +112,28 @@ def get_ice_info(node):
 def get_ice_node_image(node):
     #SGI renamed to query
     if is_smc_version_atleast("3.5.0"): 
-	(ret, out, err) = nfile.exec_to_string(['/opt/sgi/sbin/cimage', '--show-nodes', node])
+        (ret, out, err) = nfile.exec_to_string(['/opt/sgi/sbin/cimage', '--show-nodes', node])
     else:
-	(ret, out, err) = nfile.exec_to_string(['/opt/sgi/sbin/cimage', '--list-nodes', node])
+        (ret, out, err) = nfile.exec_to_string(['/opt/sgi/sbin/cimage', '--list-nodes', node])
 
     if ret != 0:
-	return None
+        return None
 
     #/opt/sgi/sbin/cimage --show-nodes r1i2n1
     #r1i2n1: ice-sles12sp2 4.4.21-69-default tmpfs
     sp = out.split()
     vlog(5, "%s Images: %s" % (node, sp))
     if len(sp) > 1:
-	return sp[1]
+        return sp[1]
     else:
-	vlog(1, 'invalid response from cimage: %s' % (out))
-	return None
+        vlog(1, 'invalid response from cimage: %s' % (out))
+        return None
  
 def get_ice_switch_info(node):
     m = re.search('^r([0-9]+)i([0-9]+)s([0-9]+)(-bmc|)$', node) 
 
     if not m:
-	return False
+        return False
 
     return {
 	'rack':	m.group(1),
@@ -147,14 +148,14 @@ def get_ice_switch_info(node):
 def get_lead(node):
     """ get lead but only from sac """
     if not is_sac():
-	return False
+        return False
 
     info = get_ice_info(node)
     if info:
-	return info['lead']
+        return info['lead']
     info = get_ice_switch_info(node)
     if info:
-	return info['lead']
+        return info['lead']
      
     return socket.gethostname() 
 
@@ -163,10 +164,10 @@ def get_bmc(node):
     
     info = get_ice_info(node)
     if info:
-	return info['bmc']
+        return info['bmc']
     info = get_ice_switch_info(node)
     if info:
-	return info['bmc']
+        return info['bmc']
  
     return '%s-bmc' % (node)
  
@@ -176,9 +177,9 @@ def get_sm():
     host = socket.gethostname()
 
     if host == 'lamgt':
-	return ['r1lead']
+        return ['r1lead']
     elif host == 'chmgt':
-	return ['r1lead', 'r2lead']
+        return ['r1lead', 'r2lead']
     return None
 
 def get_ib_speed():
@@ -187,9 +188,9 @@ def get_ib_speed():
     host = socket.gethostname()
 
     if host == 'lamgt':
-	return {'speed': 'EDR', 'link': 25, 'width': '4x'};
+        return {'speed': 'EDR', 'link': 25, 'width': '4x'};
     elif host == 'chmgt':
-	return {'speed': 'EDR', 'link': 25, 'width': '4x'};
+        return {'speed': 'EDR', 'link': 25, 'width': '4x'};
     return None
 
 def logical_to_physical_dict(v):
@@ -207,10 +208,10 @@ def physical_to_logical_dict(v):
 def logical_to_physical(rack, iru):
     """ Convert SGI logical labels to physical labels """
     if iru > 3:
-	rack *= 2
-	iru -= 4
+        rack *= 2
+        iru -= 4
     else: #IRU in rack
-	rack = rack * 2 - 1
+        rack = rack * 2 - 1
     
     return {
 	'rack': rack,
@@ -220,11 +221,11 @@ def logical_to_physical(rack, iru):
 def physical_to_logical(rack, iru):
     """ Convert SGI physical labels to logical labels """
     if rack & 1:
-	#odd rack
-	rack = (rack + 1) / 2
+        #odd rack
+        rack = (rack + 1) / 2
     else: #even rack
-	rack /= 2
-	iru += 4
+        rack /= 2
+        iru += 4
 
     return {
 	'rack': rack,
@@ -246,9 +247,9 @@ def print_label(v, pformat = None):
     """
 
     if pformat == 'raw':
-	return str(v)
+        return str(v)
     elif pformat == 'ibcv2':
-	return 'r%si%ss%sc%s.%s' % (
+        return 'r%si%ss%sc%s.%s' % (
 	    v['rack'],
 	    v['iru'],
 	    v['switch'],
@@ -256,32 +257,32 @@ def print_label(v, pformat = None):
 	    v['port']
 	)
     elif pformat == 'firmware' or pformat == 'firmware_name':
-	if not v['switch'] is None:
-	    if pformat == 'firmware_name' or v['port'] is None:
-		return 'r%si%ss%s SW%s SwitchX -  Mellanox Technologies' % (
+        if not v['switch'] is None:
+            if pformat == 'firmware_name' or v['port'] is None:
+                return 'r%si%ss%s SW%s SwitchX -  Mellanox Technologies' % (
 		    v['rack'],
 		    v['iru'],
 		    v['switch'],
 		    v['switch_chip']
 		)
-	    else:
- 		return 'r%si%ss%s SW%s SwitchX -  Mellanox Technologies/P%s' % (
+            else:
+                return 'r%si%ss%s SW%s SwitchX -  Mellanox Technologies/P%s' % (
 		    v['rack'],
 		    v['iru'],
 		    v['switch'],
 		    v['switch_chip'],
 		    v['port']
 		)
-	elif not v['node'] is None:
-	    if pformat == 'firmware_name':
-		return 'r%si%ss%s/U%s' % (
+        elif not v['node'] is None:
+            if pformat == 'firmware_name':
+                return 'r%si%ss%s/U%s' % (
 		    v['rack'],
 		    v['iru'],
 		    v['node'],
 		    v['hca'] if v['hca'] else 1 #default to first hca
 		) 
-	    else:
- 		return 'r%si%ss%s/U%s/P%s' % (
+            else:
+                return 'r%si%ss%s/U%s/P%s' % (
 		    v['rack'],
 		    v['iru'],
 		    v['node'],
@@ -289,39 +290,39 @@ def print_label(v, pformat = None):
 		    v['port'] if v['port'] else 1, #default to first port
 		) 
     elif pformat == 'physical':
-	if not v['port'] is None:
-	    return '{0:0>3}IRU{1}-{2}-{3}-{4}'.format(
+        if not v['port'] is None:
+            return '{0:0>3}IRU{1}-{2}-{3}-{4}'.format(
 		v['rack'],
 		v['iru'],
 		v['switch'],
 		v['switch_chip'],
 		v['port']
 	    )
-	else:
-	    return '{0:0>3}IRU{1}-{2}-{3}'.format(
+        else:
+            return '{0:0>3}IRU{1}-{2}-{3}'.format(
 		v['rack'],
 		v['iru'],
 		v['switch'],
 		v['switch_chip']
 	    ) 
     elif pformat == 'simple' or pformat == 'simple_name':
-	if not v['node'] is None:
-	    return 'r%si%sn%s' % (
+        if not v['node'] is None:
+            return 'r%si%sn%s' % (
 		v['rack'],
 		v['iru'],
 		v['node']
 	    ) 
-	if not v['switch'] is None:
-	    if not v['port'] is None and pformat == 'simple':
-		return 'r%si%ss%s SW%s/P%s' % (
+        if not v['switch'] is None:
+            if not v['port'] is None and pformat == 'simple':
+                return 'r%si%ss%s SW%s/P%s' % (
 		    v['rack'],
 		    v['iru'],
 		    v['switch'],
 		    v['switch_chip'],
 		    v['port']
 		)  
-	    else:
-		return 'r%si%ss%s SW%s' % (
+            else:
+                return 'r%si%ss%s SW%s' % (
 		    v['rack'],
 		    v['iru'],
 		    v['switch'],
@@ -334,10 +335,10 @@ def parse_label(label):
     """ Parse the sgi label names """
 
     def tint(v):
-	if v:
-	    return int(v)
-	else:
-	    return None
+        if v:
+            return int(v)
+        else:
+            return None
 
     vlog(5, 'parse_label(%s)' % (label))
 
@@ -418,35 +419,35 @@ def parse_label(label):
  
     match = r1.match(label) 
     if match:        
-	v['rack'] = tint(match.group('rack'))
-	v['iru'] = tint(match.group('iru'))
-	v['switch'] = tint(match.group('switch'))
-	v['switch_chip'] = tint(match.group('swchip'))
-	v['port'] = tint(match.group('port'))
-	return v
+        v['rack'] = tint(match.group('rack'))
+        v['iru'] = tint(match.group('iru'))
+        v['switch'] = tint(match.group('switch'))
+        v['switch_chip'] = tint(match.group('swchip'))
+        v['port'] = tint(match.group('port'))
+        return v
     match = r2.match(label) 
     if match:        
-	v['rack'] = tint(match.group('rack'))
-	v['iru'] = tint(match.group('iru'))
-	v['node'] = tint(match.group('node'))
-	v['port'] = tint(match.group('port'))
-	v['hca'] = tint(match.group('hca'))
-	return v
+        v['rack'] = tint(match.group('rack'))
+        v['iru'] = tint(match.group('iru'))
+        v['node'] = tint(match.group('node'))
+        v['port'] = tint(match.group('port'))
+        v['hca'] = tint(match.group('hca'))
+        return v
     match = r3.match(label) 
     if match:        
-	v['rack'] = tint(match.group('rack'))
-	v['iru'] = tint(match.group('iru'))
-	v['switch'] = tint(match.group('switch'))
-	v['switch_chip'] = tint(match.group('swchip'))
-	v['port'] = tint(match.group('port'))
-	return v    
+        v['rack'] = tint(match.group('rack'))
+        v['iru'] = tint(match.group('iru'))
+        v['switch'] = tint(match.group('switch'))
+        v['switch_chip'] = tint(match.group('swchip'))
+        v['port'] = tint(match.group('port'))
+        return v    
     match = r4.match(label) 
     if match:        
-	v['rack'] = tint(match.group('rack'))
-	v['iru'] = tint(match.group('iru'))
-	v['switch'] = tint(match.group('switch'))
-	v['switch_chip'] = tint(match.group('swchip'))
-	v['port'] = tint(match.group('port'))
-	return v    
+        v['rack'] = tint(match.group('rack'))
+        v['iru'] = tint(match.group('iru'))
+        v['switch'] = tint(match.group('switch'))
+        v['switch_chip'] = tint(match.group('swchip'))
+        v['port'] = tint(match.group('port'))
+        return v    
     return None
 

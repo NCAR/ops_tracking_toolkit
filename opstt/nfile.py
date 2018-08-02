@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# vim: set tabstop=8 softtabstop=4 noexpandtab
 #Copyright (c) 2017, University Corporation for Atmospheric Research
 #All rights reserved.
 #
@@ -36,16 +37,16 @@ def read_file_first_line(filename):
     """ Read first line of given filename """
     result = None
     with open(filename, 'r') as f:
-	result = f.readline()
-	result = result.rstrip("\n")
-	f.close()
+        result = f.readline()
+        result = result.rstrip("\n")
+        f.close()
     return result
 	
 def write_file ( file_name, contents ):
     """ Takes file_name and writes contents to file. it will clobber file_name. """
     vlog(4, 'Writing File: %s SIZE=%s' % (file_name, len(contents)))
     with open(file_name, 'w') as file:
-	file.write(contents)
+        file.write(contents)
 
 def exec_to_file ( cmd, output_file, cwd = '/tmp/' ):
     """ Runs cmd and pipes STDOUT to output_file """
@@ -77,28 +78,28 @@ def exec_to_string_with_input ( cmd, input):
     """ Runs cmd, sends input to STDIN and places Return Value, STDOUT, STDERR into returned list  """
     vlog(4, 'Running command: %s' % cmd) 
     try:
-	p = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd='/tmp/')
-	if p:	    
-	    stdout, stderr = p.communicate(input=input)
-	    return [ p.returncode, stdout, stderr ]
+        p = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd='/tmp/')
+        if p:	    
+            stdout, stderr = p.communicate(input=input)
+            return [ p.returncode, stdout, stderr ]
 
     except Exception as e:
-	vlog(1, 'Command %s failed with error: %s' % (cmd, e))
-	return [-1, '', 'Failed to run']  
+        vlog(1, 'Command %s failed with error: %s' % (cmd, e))
+        return [-1, '', 'Failed to run']  
 
 def exec_to_string ( cmd, cwd='/tmp/' ):
     """ Runs cmd and places Return Value, STDOUT, STDERR into returned list  """
     vlog(4, 'Running command: %s' % cmd) 
 
     try:
-	p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=cwd)
-	if p:
-	    stdout, stderr = p.communicate()
-	    return [ p.returncode, stdout, stderr ] 
+        p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=cwd)
+        if p:
+            stdout, stderr = p.communicate()
+            return [ p.returncode, stdout, stderr ] 
 
     except Exception as e:
-	vlog(1, 'Command %s failed with error: %s' % (cmd, e))
-	return [-1, '', 'Failed to run'] 
+        vlog(1, 'Command %s failed with error: %s' % (cmd, e))
+        return [-1, '', 'Failed to run'] 
 
 #https://stackoverflow.com/questions/600268/mkdir-p-functionality-in-python
 def mkdir_p(path, mode = 0o755):
@@ -109,3 +110,4 @@ def mkdir_p(path, mode = 0o755):
             pass
         else:
             raise
+

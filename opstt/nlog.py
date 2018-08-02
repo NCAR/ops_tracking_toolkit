@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# vim: set tabstop=8 softtabstop=4 noexpandtab
 #Copyright (c) 2017, University Corporation for Atmospheric Research
 #All rights reserved.
 #
@@ -34,10 +35,10 @@ import os
 def vlog(level, string):
     vlevel = 3
     if 'VERBOSE' in os.environ:
-	vlevel = int(os.environ['VERBOSE'])
+        vlevel = int(os.environ['VERBOSE'])
 
     if vlevel >= level:
-	print(string)
+        print(string)
 
     syslog.syslog(str(string))
 
@@ -53,11 +54,11 @@ def to_hex(string):
     """ Dumps string as hex """
 
     try:
-	if len(string) > 0 and isinstance(string, str):
-	    #https://stackoverflow.com/questions/12214801/print-a-string-as-hex-bytes
-	    return ':'.join(x.encode('hex') for x in string)
+        if len(string) > 0 and isinstance(string, str):
+            #https://stackoverflow.com/questions/12214801/print-a-string-as-hex-bytes
+            return ':'.join(x.encode('hex') for x in string)
     except Exception as err:
-	vlog(1, 'Unable to convert string to hex')
+        vlog(1, 'Unable to convert string to hex')
 
     return None
 

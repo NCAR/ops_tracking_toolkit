@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# vim: set tabstop=8 softtabstop=4 noexpandtab
 #Copyright (c) 2017, University Corporation for Atmospheric Research
 #All rights reserved.
 #
@@ -39,22 +40,22 @@ if re.search("^la", socket.gethostname()) is None:
 def node_to_tuple(n):
     m = re.match("([rR])([0-9]+)([iI])([0-9]+)([nN])([0-9]+)", n)
     if m is not None:
-	#(rack, iru, node)
-	return (int(m.group(2)), int(m.group(4)), int(m.group(6)))
+        #(rack, iru, node)
+        return (int(m.group(2)), int(m.group(4)), int(m.group(6)))
     else:
-	return None
+        return None
 
 def resolve_siblings(nodes):
     """ resolve out list of sibling nodes to given set of nodes """
     result = []
     for n in nodes:
-	nt = node_to_tuple(n)
-	for i in range(0,nodes_per_blade):
-	    nid = (nt[2] % slots_per_iru) + (i*slots_per_iru)
-	    nodename = "r%di%dn%d" % (nt[0], nt[1], nid)
+        nt = node_to_tuple(n)
+        for i in range(0,nodes_per_blade):
+            nid = (nt[2] % slots_per_iru) + (i*slots_per_iru)
+            nodename = "r%di%dn%d" % (nt[0], nt[1], nid)
 
-	    if not nodename in result:
-		result.append(nodename)
+            if not nodename in result:
+                result.append(nodename)
 
     return result
 

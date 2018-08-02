@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# vim: set tabstop=8 softtabstop=4 noexpandtab
 #Copyright (c) 2017, University Corporation for Atmospheric Research
 #All rights reserved.
 #
@@ -36,58 +37,58 @@ import re
 
 def get_cluster_name():
     if re.search("^ys", socket.gethostname()):
-	return 'yellowstone'
+        return 'yellowstone'
     elif re.search("^js", socket.gethostname()):
-	return 'jellystone'
+        return 'jellystone'
     elif re.search("^er", socket.gethostname()):
-	return 'erebus'
+        return 'erebus'
     return None
 
 def get_cluster_name_formal():
     if re.search("^ys", socket.gethostname()):
-	return 'Yellowstone'
+        return 'Yellowstone'
     elif re.search("^js", socket.gethostname()):
-	return 'Jellystone'
+        return 'Jellystone'
     elif re.search("^er", socket.gethostname()):
-	return 'Erebus'
+        return 'Erebus'
     return None        
  
 def is_xcat_mgr():
     host = socket.gethostname()
 
     if host == 'ysmgt1' or host == 'ermgt1' or host == 'jsmgt1':
-	return True
+        return True
     else:
-	return False
+        return False
   
 def get_sm():
     """ get smc nodes """
-    
+
     host = socket.gethostname()
 
     if host == 'jsmgt1':
-	return ['jsufm1', 'jsufm2']
+        return ['jsufm1', 'jsufm2']
     elif host == 'ysmgt1':
-	return ['ysmgt1', 'ysmgt2']
+        return ['ysmgt1', 'ysmgt2']
     elif host == 'ermgt1':
-	return ['erufm1', 'erufm2']
+        return ['erufm1', 'erufm2']
     return None                    
 
 def get_bmc(node):
     """ get node bmc name """
-    
+
     return "{0}-imm".format(node)
 
 def get_ib_speed():
     """ get Infiniband network speed """
-    
+
     host = socket.gethostname()
 
     if host == 'ysmgt1':
-	return {'speed': 'FDR', 'link': 14, 'width': '4x'};
+        return {'speed': 'FDR', 'link': 14, 'width': '4x'};
     elif host == 'ermgt1':
-	return {'speed': 'FDR10', 'link': 10, 'width': '4x'};
+        return {'speed': 'FDR10', 'link': 10, 'width': '4x'};
     elif host == 'jsmgt1':
-	return {'speed': 'FDR', 'link': 14, 'width': '4x'};
+        return {'speed': 'FDR', 'link': 14, 'width': '4x'};
     return None
- 
+     
